@@ -5,34 +5,33 @@ namespace CourseWork
 {
     public class Integral
     {
-        private static double startPoint, endPoint, width, total, eps, diff,
-            lRecResult, rRecResult, mRecResult, trapResult, sympResult;
+        private double startPoint, endPoint, width, total, eps;
 
         private Func<double, double, double> Func;
-        private delegate double Delegate(int numberOfParts);
+        private delegate double Delegate(uint numberOfParts);
 
         public double StartPoint
         {
-            get { return startPoint; }
-            set { startPoint = value; }
+            get => startPoint;
+            set => startPoint = value;
         }
 
         public double EndPoint
         {
-            get { return endPoint; }
-            set { endPoint = value; }
+            get => endPoint;
+            set => endPoint = value;
         }
 
         public double Eps
         {
-            get { return eps; }
-            set { eps = value; }
+            get => eps;
+            set => eps = value;
         }
 
         public Func<double, double, double> Function
         {
-            get { return Func; }
-            set { Func = value; }
+            get => Func;
+            set => Func = value;
         }
 
         public enum Methods
@@ -55,58 +54,55 @@ namespace CourseWork
                 [Methods.SympsonMethod] = new Delegate(Sympson)
             };
 
-            int k = 10;
-            int i = 0;
+            uint k = 10;
+            uint i = 0;
+            double diff;
             do
             {
                 i++;
-                diff = Math.Abs(delegates[method].Invoke(k * i) - delegates[method].Invoke(k * (i + 1)));
+                diff = Math.Abs(delegates[method](k * i) - delegates[method](k * (i + 1)));
             } while (diff > eps);
 
-            return delegates[method].Invoke(k * (i + 1));
+            return delegates[method](k * (i + 1));
         }
 
-        private double LeftRectangle(int numberOfParts)
+        private double LeftRectangle(uint numberOfParts)
         {
             width = (endPoint - startPoint) / numberOfParts;
             total = 0;
             for (int i = 0; i < numberOfParts; i++)
                 total += Func(startPoint + width * i, width);
-            lRecResult = width * total;
-            return lRecResult;
+            return width * total;
         }
 
-        private double MiddleRectangle(int numberOfParts)
+        private double MiddleRectangle(uint numberOfParts)
         {
             width = (endPoint - startPoint) / numberOfParts;
             total = 0;
             for (int i = 1; i <= numberOfParts; i++)
                 total += Func(startPoint + width * i - width / 2, width);
-            mRecResult = width * total;
-            return mRecResult;
+            return width * total;
         }
 
-        private double RightRectangle(int numberOfParts)
+        private double RightRectangle(uint numberOfParts)
         {
             width = (endPoint - startPoint) / numberOfParts;
             total = 0;
             for (int i = 1; i <= numberOfParts; i++)
                 total += Func(startPoint + width * i, width);
-            rRecResult = width * total;
-            return rRecResult;
+            return width * total;
         }
 
-        private double Trapezium(int numberOfParts)
+        private double Trapezium(uint numberOfParts)
         {
             width = (endPoint - startPoint) / numberOfParts;
             total = (width / 2) * (Func(startPoint, width) + Func(endPoint, width));
             for (int i = 1; i < numberOfParts; i++)
                 total += Func(startPoint + width * i, width) * width;
-            trapResult = total;
-            return trapResult;
+            return total;
         }
 
-        private double Sympson(int numberOfParts)
+        private double Sympson(uint numberOfParts)
         {
             width = (endPoint - startPoint) / numberOfParts;
             total = (Func(startPoint, width) + Func(endPoint, width));
@@ -115,8 +111,7 @@ namespace CourseWork
                 int k = 2 + 2 * (i % 2);
                 total += k * Func(startPoint + width * i, width);
             }
-            sympResult = total * width / 3;
-            return sympResult;
+            return total * width / 3;
         }
     }
 }
